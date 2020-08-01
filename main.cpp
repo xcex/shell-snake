@@ -62,24 +62,33 @@ void key_input_reaction(snake& snek, const char keypress) {
 
 	static const coord dir_up(0,-1), dir_down(0,1), dir_left(-1,0), dir_right(1,0);	// define unit vectors for the direction the snake can go ('static' to not create the objects multiple times)
 
+	// as a switch-statement is not possible for chars/strings, if/else-clauses have to be used (with brakes to make them esentially work like a switch)
     if (keypress == 'd' || keypress == '6') {
         // change snake direction to RIGHT
+		if (snek.get_direction() == dir_left) {return;}	// if the current direction is the opposite of the set direction, no change to the direction is made
         snek.set_direction(dir_right);
+		return;	// return if the option has been chosen
 
     } else if(keypress == 'a' || keypress == '4') {
         // change snake direction to LEFT
+		if (snek.get_direction() == dir_right) {return;}	// if the current direction is the opposite of the set direction, no change to the direction is made
 		snek.set_direction(dir_left);
+		return;	// return if the option has been chosen
 
     } else if(keypress == 'w' || keypress == '8') {
 		// change snake direction to UP
+		if (snek.get_direction() == dir_down) {return;}	// if the current direction is the opposite of the set direction, no change to the direction is made
 		snek.set_direction(dir_up);
+		return;	// return if the option has been chosen
 
     } else if(keypress == 's' || keypress == '2') {
         // change snake direction to DOWN
+		if (snek.get_direction() == dir_up) {return;}	// if the current direction is the opposite of the set direction, no change to the direction is made
 		snek.set_direction(dir_down);
+		return;	// return if the option has been chosen
 
     } else if(keypress == 'q' || keypress == 'z' || keypress == 'c') {
-        
+        // emergency exit the program
 		std::cout << "<- safely exiting program ->" << std::endl;
         exit(EXIT_SUCCESS);
     }
@@ -112,7 +121,7 @@ coord create_food(snake snek, coord worldSize) {
 
 int main() {
 	
-	coord worldSize(100, 30);	// size of the playing field (horizontal_size, vertical_size)
+	coord worldSize(60, 22);	// size of the playing field (horizontal_size, vertical_size)
 	coord food_pos;	// tracks position of the food
 	char k;	// holds user key input
 
@@ -137,20 +146,16 @@ int main() {
 
 			std::cin >> k; // get an input character
 			key_input_reaction(snek, k);	// use the input to perform an action on the snake
-
-			//TODO: make it so that you cannot chose the opposite direction of traveling so the snake does not 
-			// 		run into itself instantly when pressing the button (change this in key_input_reaction() method )
         }
 
 		// update the positions of the snake and food
 		za_warudo.update(snek, food_pos);
-
 		// draw the screen with the new positions of the snake and the food
 		za_warudo.print_world();
-
+ 
 		snek.move();	// move the snake usinf the new direction which was set by the key input
 
-		// check wether the snake moved onto a food tile (in this case, if the head of the snake overlaps with the position of the food). if yes, grow and move it
+		// check whether the snake moved onto a food tile (in this case, if the head of the snake overlaps with the position of the food). if yes, grow and move it
 		if(snek.get_element(snek.get_length()-1) == food_pos) {
 
 			// the food has been taken, now grow it and increase the score

@@ -64,11 +64,11 @@ void snake::grow() {
 }
 void snake::check_collision() {
 
-	// First, check if the snake is inside the world bound.
+	// First, check if the snake is inside the world boundary.
 	// It is enough to just check the 'head element (last element of the array) since the others snake parts only propagated to previously known positions. 
 	// Only the head assumes a new position after moving so it is enough to just check the position of the head and it's pos relative to the other parts of the snake
-	if ( (snake_elements[snake_len-1].get_x() > max_range.get_x()) || (snake_elements[snake_len-1].get_x() < 0) ||
-		 (snake_elements[snake_len-1].get_y() > max_range.get_y()) || (snake_elements[snake_len-1].get_y() < 0) ) {
+	if ( (snake_elements[snake_len-1].get_x() >= max_range.get_x()) || (snake_elements[snake_len-1].get_x() < 0) ||
+		 (snake_elements[snake_len-1].get_y() >= max_range.get_y()) || (snake_elements[snake_len-1].get_y() < 0) ) {
 
 		is_dead = true;	// this means that the snake went out of bound i.e. it hit one of the walls
 		return;
@@ -88,6 +88,10 @@ void snake::check_collision() {
 void snake::set_direction(const coord new_dir) {
 	
 	direction_facing = new_dir;	// update the new direction the snake is looking
+}
+coord snake::get_direction() {
+
+	return direction_facing;
 }
 unsigned snake::get_length() {
 	

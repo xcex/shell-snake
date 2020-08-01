@@ -18,6 +18,7 @@ class snake {
 	void grow();
 
 	void set_direction(const coord);
+	coord get_direction();
 	unsigned get_length();
 	coord get_element(const unsigned);
 	bool get_is_dead();
