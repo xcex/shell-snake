@@ -71,6 +71,7 @@ void snake::check_collision() {
 		 (snake_elements[snake_len-1].get_y() > max_range.get_y()) || (snake_elements[snake_len-1].get_y() < 0) ) {
 
 		is_dead = true;	// this means that the snake went out of bound i.e. it hit one of the walls
+		return;
 	}
 
 	// check if the head moved into an existing part of the snake. If true, the snake dies
@@ -78,6 +79,7 @@ void snake::check_collision() {
 
 		if ( snake_elements[i] == snake_elements[snake_len-1] ) {
 			is_dead = true;
+			return;
 		}
 	}
 }
@@ -102,12 +104,4 @@ bool snake::get_is_dead() {
 void snake::set_is_dead(const bool dead_in) {
 	
 	is_dead = dead_in;
-}
-bool snake::get_food_taken() {
-
-	return food_taken;
-}
-void snake::set_food_taken(const bool food_in) {
-
-	food_taken = food_in;
 }

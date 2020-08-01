@@ -110,6 +110,8 @@ void world::update(snake snek, coord food) {
 
 	// update the grid with the snake and food positions and assign different characters to the grid to represent them accordingly:
 
+	world::reset();	// need to clear the world to print it again
+
 	// update the position of the food:
 	grid[food.get_y()*worldsize.get_x() + food.get_x()] = "%"; // set this element to be food
 

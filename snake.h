@@ -29,10 +29,9 @@ class snake {
 	coord direction_facing;	// the direction in which the snake is looking and will go to next
 	coord max_range;	// the maximal x-range/boundary and y-range/boundary the snake can move in. This is equal to the size of the playing field grid
 	unsigned snake_len;	// length of the snake
-	std::vector<coord> snake_elements;	// holds the body of the snake
+	std::vector<coord> snake_elements;	// holds the body of the snake. The lasst entry (snake_len - 1) is the head of the snake
 	
 	bool is_dead = false;
-	bool food_taken = false;
 };
 
 

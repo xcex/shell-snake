@@ -60,7 +60,7 @@ void sleepcp(const int milliseconds) {
 // change the direction of the snake (w,a,s,d) or exit program (q,z,c)
 void key_input_reaction(snake& snek, const char keypress) {
 
-	static const coord dir_up(0,1), dir_down(0,-1), dir_left(-1,0), dir_right(1,0);	// define unit vectors for the direction the snake can go ('static' to not create the objects multiple times)
+	static const coord dir_up(0,-1), dir_down(0,1), dir_left(-1,0), dir_right(1,0);	// define unit vectors for the direction the snake can go ('static' to not create the objects multiple times)
 
     if (keypress == 'd' || keypress == '6') {
         // change snake direction to RIGHT
@@ -86,6 +86,28 @@ void key_input_reaction(snake& snek, const char keypress) {
 
 }
 
+// creates a food while checking that the food is not on top of the snake
+coord create_food(snake snek, coord worldSize) {
+
+	bool generate_success = false;
+	coord food;	// story the food position
+
+	// randomly generate a possible coordinate until it does not overlap the snake
+	while (!generate_success) {
+
+		food = coord(rand()%worldSize.get_x(), rand()%worldSize.get_y());	// rng a position inside the grid range
+		generate_success = true;
+
+		// check if the food overlaps with the snake:
+		for (unsigned i = 0; i < snek.get_length(); ++i) {
+			if (food == snek.get_element(i)) {
+				generate_success = false;	// the snake overlaps with the food. The while-loop needs to be repeated
+				break;	// break out of the for-loop
+			}
+		}
+	}
+	return food;
+}
 
 
 int main() {
@@ -94,32 +116,56 @@ int main() {
 	coord food_pos;	// tracks position of the food
 	char k;	// holds user key input
 
-	// init a playing field of the given size:
+	// initialize a playing field of the given size:
 	world za_warudo(worldSize.get_x(), worldSize.get_y());
 	// construct snake object with given starting position, direction, length, and possible movement range (which is the same as the world size):
-	snake snek(coord(worldSize.get_x()/2, worldSize.get_y()/2), coord(-1,0), 4, za_warudo.get_size_x(), za_warudo.get_size_y());
+	snake snek(coord(worldSize.get_x()/2, worldSize.get_y()/2), coord(-1,0), 5, za_warudo.get_size_x(), za_warudo.get_size_y());
 
 	// initialize rng:
 	std::srand(worldSize.get_x()*worldSize.get_y());	// use the world size as a seed for the rng
 	//std::srand(time(0)*10000); // or: gererate a seed for random number generation (need to include <time.h> for this)
 
+	// generate an initial food in a position
+	food_pos = create_food(snek, worldSize);	//TODO: write a function so that the food does not generate on top of the snake
 
 	// start main game loop. Stops if the snake is dead
 	while (!snek.get_is_dead()) {
 
-		sleepcp(200);	// sleep by a certain amount each step to make the game speed possible to handle for humans
+		sleepcp(100);	// sleep by a certain amount (in milliseconds) each step to make the game speed possible to handle for humans
 
         if(_kbhit()) {
 
 			std::cin >> k; // get an input character
-			key_input_reaction(snek, k);
+			key_input_reaction(snek, k);	// use the input to perform an action on the snake
+
+			//TODO: make it so that you cannot chose the opposite direction of traveling so the snake does not 
+			// 		run into itself instantly when pressing the button (change this in key_input_reaction() method )
         }
 
-		// TODO: implement the actual game loop logic
-		// first generate food and update world, then print it. after that make the snake do stuff like growing or moving
+		// update the positions of the snake and food
+		za_warudo.update(snek, food_pos);
+
+		// draw the screen with the new positions of the snake and the food
 		za_warudo.print_world();
-		break;
+
+		snek.move();	// move the snake usinf the new direction which was set by the key input
+
+		// check wether the snake moved onto a food tile (in this case, if the head of the snake overlaps with the position of the food). if yes, grow and move it
+		if(snek.get_element(snek.get_length()-1) == food_pos) {
+
+			// the food has been taken, now grow it and increase the score
+			snek.grow();
+			za_warudo.increment_score();
+
+			food_pos = create_food(snek, worldSize);	// the last food has been eaten. create a new one
+		}
+
+		snek.check_collision();	// checks collision of the snake with the border and/or itself. It it hit something, it dies
+
 	}
+
+	//TODO: insert "you lost" screen
+	std::cout << "The snake died! The game is over!" << std::endl;
 
 
 	return 0;
