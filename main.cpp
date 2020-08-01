@@ -8,26 +8,17 @@
 #include "snake.h"
 #include "world.h"
 
-
 /*
-REFERENCES:
-
-I Got the functions _kbhit() and sleepcp() from Suraj Singh Bisht.
-Blog:'www.bitforestinfo.com', Github:'https://github.com/surajsinghbisht054'
-
-Links:
-    https://www.quora.com/With-which-function-can-I-replace-kbhit-in-C++-because-the-header-conio-h-doesnt-exist-in-linux
-
-Ubuntu Users (try to run the program frst, this may be optional to install):
-    sudo apt-get install libncurses5-dev libncursesw5-dev
+__author__ = "Cédric Jockel"
+__email__  = "cedric.jockel@stud.uni-frankfurt.de"
+__GitHub__ = "https://github.com/xcex"
+__version__ = "1.0.0"	// initial release
 */
-
 
 // --------------------------------------------------------------------------------------------------------
 
-
 // http://www.flipcode.com/archives/_kbhit_for_Linux.shtml
-// Check if KeyBoard is Pressed Or Not
+// Check if keyboard is pressed or not
 int _kbhit() {
 
 	int bytesWaiting;
@@ -48,6 +39,7 @@ int _kbhit() {
     return bytesWaiting;
 }
 
+
 // Cross-platform sleep function
 void sleepcp(const int milliseconds) {
 
@@ -55,6 +47,7 @@ void sleepcp(const int milliseconds) {
     time_end = clock() + milliseconds * CLOCKS_PER_SEC/1000;
     while (clock() < time_end) { }
 }
+
 
 // handle the reaction to key input
 // change the direction of the snake (w,a,s,d) or exit program (q,z,c)
@@ -95,6 +88,7 @@ void key_input_reaction(snake& snek, const char keypress) {
 
 }
 
+
 // creates a food while checking that the food is not on top of the snake
 coord create_food(snake snek, coord worldSize) {
 
@@ -121,7 +115,7 @@ coord create_food(snake snek, coord worldSize) {
 
 int main() {
 	
-	coord worldSize(60, 22);	// size of the playing field (horizontal_size, vertical_size)
+	coord worldSize(100, 30);	// size of the playing field (horizontal_size, vertical_size)
 	coord food_pos;	// tracks position of the food
 	char k;	// holds user key input
 
@@ -135,12 +129,13 @@ int main() {
 	//std::srand(time(0)*10000); // or: gererate a seed for random number generation (need to include <time.h> for this)
 
 	// generate an initial food in a position
-	food_pos = create_food(snek, worldSize);	//TODO: write a function so that the food does not generate on top of the snake
+	food_pos = create_food(snek, worldSize);
 
 	// start main game loop. Stops if the snake is dead
 	while (!snek.get_is_dead()) {
 
 		sleepcp(100);	// sleep by a certain amount (in milliseconds) each step to make the game speed possible to handle for humans
+		//TODO: make the timing dependant on score so the game becomes progressively faster over time
 
         if(_kbhit()) {
 
@@ -148,12 +143,12 @@ int main() {
 			key_input_reaction(snek, k);	// use the input to perform an action on the snake
         }
 
-		// update the positions of the snake and food
+		// update the positions of the snake and food on the grid
 		za_warudo.update(snek, food_pos);
 		// draw the screen with the new positions of the snake and the food
 		za_warudo.print_world();
  
-		snek.move();	// move the snake usinf the new direction which was set by the key input
+		snek.move();	// move the snake using the new direction which was set by the key input
 
 		// check whether the snake moved onto a food tile (in this case, if the head of the snake overlaps with the position of the food). if yes, grow and move it
 		if(snek.get_element(snek.get_length()-1) == food_pos) {
@@ -171,7 +166,6 @@ int main() {
 
 	//TODO: insert "you lost" screen
 	std::cout << "The snake died! The game is over!" << std::endl;
-
 
 	return 0;
 }
