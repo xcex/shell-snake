@@ -23,6 +23,10 @@ How to use:
 
 **VERSIONS AND CHANGELOG:**   
 
+- v1.1.0
+	- The playing field now takes the same size as the currently open console window
+	- The timestep of each tick now gets smaller after more food has been collected. The decay function f(score) can be changed using the parameters 'timestep_beginning', 'timestep_min' and 'f'(decay factor). The function has the form 'f(s)= f*(timestep_beginning-timestep_min) / (f+s) + timestep_min'
+
 - v1.0.1
 	- Fixed a bug where the snake would move two tiles per tick when eating a food
 

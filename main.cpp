@@ -115,9 +115,16 @@ coord create_food(snake snek, coord worldSize) {
 
 int main() {
 	
-	coord worldSize(60, 20);	// size of the playing field (horizontal_size, vertical_size)
+	// for Lunux/Unix systems, get the size (number of colums and rows) of the terminal window
+	struct winsize shell_window;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &shell_window);
+
+	coord worldSize(shell_window.ws_col-2, shell_window.ws_row-6);	// size of the playing field (horizontal_size, vertical_size). '-2' and '-6' to account for the 'GUI' borders
 	coord food_pos;	// tracks position of the food
 	char k;	// holds user key input
+
+	int timestep_beginning = 120, timestep_min = 40; // the time in [ms] one tick takes at start and at minimum
+	int f = 7;	// scaling factor for the decay of the time-tick. MUST be bigger then 1
 
 	// initialize a playing field of the given size:
 	world za_warudo(worldSize.get_x(), worldSize.get_y());
@@ -134,7 +141,7 @@ int main() {
 	// start main game loop. Stops if the snake is dead
 	while (!snek.get_is_dead()) {
 
-		sleepcp(100);	// sleep by a certain amount (in milliseconds) each step to make the game speed possible to handle for humans
+		sleepcp( f*(timestep_beginning-timestep_min)/(f+za_warudo.get_score()) + timestep_min );	// sleep by a certain amount (in milliseconds) each step to make the game speed possible to handle for humans
 		//TODO: make the timing dependant on score so the game becomes progressively faster over time
 
         if(_kbhit()) {
@@ -161,7 +168,7 @@ int main() {
 			snek.move();	// move the snake using the new direction which was set by the key input
 		}
 
-		snek.check_collision();	// checks collision of the snake with the border and/or itself. It it hit something, it dies
+		snek.check_collision();	// checks collision of the snake with the border and/or itself. If it hit something, it dies (game ends)
 
 	}
 
