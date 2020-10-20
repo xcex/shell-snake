@@ -15,7 +15,7 @@ How to use:
 	- movement: 'w': up; 'a': left; 's': down; 'd': right  
 	- utility: 'q' or 'c' or 'z' quit the program prematurely
 - Change game paramatres in 'main.cpp':
-	- change 'worldSize(x,y)': x: width of the playing field; y: height of the field (in character sizes)
+	- change parameters 'timestep_beginning', 'timestep_min' and 'f'(decay factor) to affect the behaviour of the decay-function (see patchnotes v.1.1.0)
 	- change parameters in constructor of the snake object: (starting position, starting direction, start length). I Recommend leaving everything on default
 
 
