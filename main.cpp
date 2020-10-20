@@ -115,7 +115,7 @@ coord create_food(snake snek, coord worldSize) {
 
 int main() {
 	
-	coord worldSize(100, 30);	// size of the playing field (horizontal_size, vertical_size)
+	coord worldSize(60, 20);	// size of the playing field (horizontal_size, vertical_size)
 	coord food_pos;	// tracks position of the food
 	char k;	// holds user key input
 
@@ -147,8 +147,6 @@ int main() {
 		za_warudo.update(snek, food_pos);
 		// draw the screen with the new positions of the snake and the food
 		za_warudo.print_world();
- 
-		snek.move();	// move the snake using the new direction which was set by the key input
 
 		// check whether the snake moved onto a food tile (in this case, if the head of the snake overlaps with the position of the food). if yes, grow and move it
 		if(snek.get_element(snek.get_length()-1) == food_pos) {
@@ -158,6 +156,9 @@ int main() {
 			za_warudo.increment_score();
 
 			food_pos = create_food(snek, worldSize);	// the last food has been eaten. create a new one
+		}
+		else {	// if-else statement is to avoid that the snake grows AND moves in one tick because that can lead to the snake colliding with the wall if a food spawns at a border
+			snek.move();	// move the snake using the new direction which was set by the key input
 		}
 
 		snek.check_collision();	// checks collision of the snake with the border and/or itself. It it hit something, it dies
